@@ -1,5 +1,5 @@
 #include "pipe_networking.h"
-
+#define FIFO "eiofndkl"
 
 /*=========================
   server_handshake
@@ -11,6 +11,17 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_handshake(int *to_client) {
+  mkfifo(FIFO, 0644);
+  int FIFO1 = open(FIFO, O_RDONLY);
+  char from_client[10];
+  read(FIFO1, from_client, 10);
+  printf("%s\n", from_client);
+  int FIFO2 = open(from_client, O_WRONLY);
+  write(FIFO2, "confirmation\n", 50);
+  if(0 >= read(FIFO1, from_client, 10)){
+    printf("no confirmation from client\n");
+  }
+  else printf("%s\n", from_client);
   return 0;
 }
 
@@ -25,5 +36,13 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
+  int FIFO1 = open(FIFO, O_WRONLY);
+  mkfifo("Yes?", 0644);
+  int FIFO2 = open("Yes?", O_RDONLY);
+  write(FIFO1, "Yes?", 5);
+  char from_server[50];
+  read(FIFO2, from_server, 50);
+  printf("%s\n", from_server);
+  write(FIFO1, "confirmation\n", 50);
   return 0;
 }
