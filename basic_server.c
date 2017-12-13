@@ -12,7 +12,7 @@ int main() {
   printf("Recieved: %s\n", input_string);
   int index = 0;
   while (index < strlen(input_string)) {
-    toupper(input_string[index]);
+    input_string[index] = toupper(input_string[index]);
     index++;
   }
   write(to_client, input_string, strlen(input_string));
